@@ -1,2 +1,4 @@
 build/*.xlsx
 build/*.json
+build/x/
+build/*.txt
