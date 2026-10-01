@@ -23,8 +23,12 @@ def pv(n, v):
     return p
 
 
+import glob
+sys.path.insert(0, glob.glob('/root/.claude/skills/synced/*/xlsx/scripts')[0])
+from office.soffice import get_soffice_env  # noqa: E402
+
 proc = subprocess.Popen(['soffice', '--headless', '--invisible', '--norestore',
-                         '--accept=socket,host=localhost,port=2002;urp;'])
+                         '--accept=socket,host=localhost,port=2002;urp;'], env=get_soffice_env())
 ctx = None
 for _ in range(60):
     try:
@@ -35,7 +39,7 @@ for _ in range(60):
     except Exception:
         time.sleep(1)
 desktop = ctx.ServiceManager.createInstanceWithContext('com.sun.star.frame.Desktop', ctx)
-doc = desktop.loadComponentFromURL(uno.systemPathToFileUrl(SRC), '_blank', 0, (pv('Hidden', True),))
+doc = desktop.loadComponentFromURL(uno.systemPathToFileUrl(SRC), '_blank', 0, (pv('Hidden', True), pv('FilterName', 'Calc MS Excel 2007 XML')))
 doc.calculateAll()
 sheets = doc.Sheets
 src_idx = [sheets.getByIndex(i).Name for i in range(sheets.Count)].index('Estructura EV')
